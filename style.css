@@ -175,7 +175,7 @@ body {
 .login-wrapper {
     position: relative;
     z-index: 1;
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -490,7 +490,7 @@ select.input-field option {
 /* ==================== Sidebar ==================== */
 .sidebar {
     width: 280px;
-    min-height: 100vh;
+    height: 100vh;
     position: fixed;
     right: 0;
     top: 0;
@@ -500,12 +500,14 @@ select.input-field option {
     z-index: 40;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     transition: transform var(--transition);
 }
 
 .sidebar__header {
     padding: 24px 20px;
     border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
 }
 
 .sidebar__logo {
@@ -524,6 +526,7 @@ select.input-field option {
 
 .sidebar__profile {
     padding: 16px 12px 8px;
+    flex-shrink: 0;
 }
 
 .profile-card {
@@ -569,6 +572,21 @@ select.input-field option {
     overflow-y: auto;
 }
 
+
+/* Scrollbar for sidebar nav */
+.sidebar__nav::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar__nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sidebar__nav::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+}
+.sidebar__nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.25);
+}
 .sidebar-link {
     display: flex;
     align-items: center;
@@ -622,6 +640,7 @@ select.input-field option {
 .sidebar__footer {
     padding: 12px;
     border-top: 1px solid var(--border);
+    flex-shrink: 0;
 }
 
 /* ==================== المحتوى الرئيسي ==================== */
@@ -630,7 +649,7 @@ select.input-field option {
 }
 .main-content {
     margin-right: 280px;
-    min-height: 100vh;
+    height: 100vh;
     flex: 1;
 }
 
@@ -782,6 +801,7 @@ select.input-field option {
 .cards-list {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     gap: 12px;
 }
 
@@ -917,6 +937,7 @@ select.input-field option {
 .sessions-list {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     gap: 8px;
 }
 
@@ -1000,6 +1021,7 @@ select.input-field option {
 .new-just__left {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     gap: 20px;
 }
 
@@ -1031,6 +1053,7 @@ select.input-field option {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     align-items: center;
     gap: 6px;
 }
@@ -1055,6 +1078,7 @@ select.input-field option {
 .progress-list {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     gap: 16px;
 }
 .progress-item__header {
@@ -1184,6 +1208,7 @@ select.input-field option {
     z-index: 200;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     gap: 8px;
 }
 .toast {
@@ -1501,6 +1526,7 @@ select.input-field option {
     min-width: 0;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     gap: 3px;
 }
 .subject-card__name {
@@ -1650,6 +1676,7 @@ select.input-field option {
 .subject-info {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     gap: 3px;
     min-width: 0;
 }
@@ -1802,6 +1829,7 @@ select.input-field option {
 .subjects-empty-year {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     align-items: center;
     justify-content: center;
     gap: 8px;
@@ -1881,7 +1909,22 @@ select.input-field option {
 [data-theme="light"] .sidebar__footer {
     border-top-color: var(--border);
 }
-[data-theme="light"] .sidebar-link {
+[data-theme="light"] 
+/* Scrollbar for sidebar nav */
+.sidebar__nav::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar__nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sidebar__nav::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+}
+.sidebar__nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.25);
+}
+.sidebar-link {
     color: var(--text-muted);
 }
 [data-theme="light"] .sidebar-link:hover {
@@ -2146,6 +2189,7 @@ select.input-field option {
 .time-picker-divider {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     align-items: center;
     justify-content: center;
     gap: 6px;

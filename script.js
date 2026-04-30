@@ -398,7 +398,8 @@ function showAdminPage(pageId) {
     const titles = {
         'admin-main': 'الإحصائيات', 'admin-justifications': 'جميع التبريرات',
         'admin-appeals': 'الطعون', 'admin-students': 'إدارة الطلاب',
-        'admin-users': 'إدارة المستخدمين', 'admin-specialties': 'التخصصات والمواد'
+        'admin-users': 'إدارة المستخدمين', 'admin-specialties': 'التخصصات والمواد',
+        
     };
     document.getElementById('admin-page-title').textContent = titles[pageId] || '';
     if (pageId === 'admin-justifications') loadAndRenderAdminJustifications();
@@ -407,6 +408,7 @@ function showAdminPage(pageId) {
     if (pageId === 'admin-users')          loadAndRenderAdminUsers();
     if (pageId === 'admin-specialties')    loadAndRenderAdminSpecialties();
     if (pageId === 'admin-main')           loadAndRenderAdminDashboard();
+    
 }
 
 function switchPage(dashboardId, sidebarId, pageId) {
@@ -776,6 +778,8 @@ async function loadAndRenderAdminDashboard() {
         apiCall('GET', '/justifications')
     ]);
 
+    
+
     if (!statsRes.ok) return;
     const s = statsRes.data;
 
@@ -960,6 +964,9 @@ async function loadAndRenderAdminUsers() {
         '</div></td></tr>'
     ).join('');
 }
+
+/* ==================== طلبات تسجيل الأساتذة (Admin) ==================== */
+
 
 /* ==================== إدارة التخصصات ==================== */
 
@@ -1194,8 +1201,15 @@ function openReviewModal(justId, presetDecision) {
 
 // قبول مباشر بدون modal
 async function acceptJustificationDirect(justId) {
-    const j = _justs.find(x => x.id == justId);
-    if (!j) return;
+    let j = _justs.find(x => x.id == justId);
+    if (!j) {
+        const res = await apiCall('GET', '/justifications');
+        if (res.ok) {
+            _justs = res.data.justifications || [];
+            j = _justs.find(x => x.id == justId);
+        }
+        if (!j) { showToast('تعذّر تحميل بيانات التبرير', 'error'); return; }
+    }
     const res = await apiCall('POST', '/justifications/' + justId + '/review', { decision: 'accepted', notes: '' });
     if (res.ok) {
         showToast('تم قبول التبرير', 'success');
@@ -1207,9 +1221,17 @@ async function acceptJustificationDirect(justId) {
 }
 
 // رفض مع إدخال سبب فقط (بدون خيار القرار)
-function openRejectModal(justId) {
-    const j = _justs.find(x => x.id == justId);
-    if (!j) return;
+async function openRejectModal(justId) {
+    // البحث في الذاكرة أولاً، وإن لم يُوجد نجلبه من API
+    let j = _justs.find(x => x.id == justId);
+    if (!j) {
+        const res = await apiCall('GET', '/justifications');
+        if (res.ok) {
+            _justs = res.data.justifications || [];
+            j = _justs.find(x => x.id == justId);
+        }
+        if (!j) { showToast('تعذّر تحميل بيانات التبرير', 'error'); return; }
+    }
     const html =
         '<div style="margin-bottom:14px;"><b>' + (j.studentName || '') + '</b> &bull; ' + j.date + '</div>' +
         '<div style="margin-bottom:14px;display:flex;flex-wrap:wrap;gap:6px;">' + (j.sessions || []).map(s => '<span class="session-tag">' + escapeHTML(s.subject) + '</span>').join('') + '</div>' +
