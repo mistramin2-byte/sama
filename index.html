@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تبريرات الغياب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: {
+                cairo: ['Cairo', 'sans-serif'],
+                roboto: ['Roboto', 'sans-serif'],
+                montserrat: ['Montserrat', 'sans-serif']
+            } } }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Roboto:wght@100;200;300;400;500;700;900&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ==================== صفحة الدخول ==================== -->
+    <div id="login-page">
+        <div class="login-bg"></div>
+        <div class="login-wrapper">
+            <div class="login-card">
+                <div class="login-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <h1>نظام تبريرات الغياب</h1>
+                    <p>منصة إدارة وتتبع الغيابات الأكاديمية</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="login-reg-number">رقم التسجيل</label>
+                    <input type="text" id="login-reg-number" class="input-field"
+                           placeholder="STU001 / PROF001 / ADMIN01" autocomplete="username">
+                </div>
+                <div class="form-group" style="position:relative">
+                    <label for="login-password">كلمة السر</label>
+                    <input type="password" id="login-password" class="input-field"
+                           placeholder="- - - - - - - -" autocomplete="current-password">
+                    <button type="button" onclick="togglePw()" id="pw-eye-btn"
+                            style="position:absolute;left:12px;top:38px;background:none;border:none;cursor:pointer;color:var(--text-muted)">
+                        <i class="fas fa-eye" id="pw-eye"></i>
+                    </button>
+                </div>
+
+                <button class="btn-primary btn-full" onclick="handleLogin()" id="login-btn">
+                    <i class="fas fa-arrow-right-to-bracket"></i>
+                    تسجيل الدخول
+                </button>
+
+                <!-- زر التسجيل الجديد -->
+                <div style="text-align:center;margin-top:14px;">
+                    <span style="color:var(--text-muted);font-size:0.85rem;">ليس لديك حساب؟ </span>
+                    <button type="button" onclick="showRegisterPage()"
+                            style="background:none;border:none;color:var(--accent);font-family:'Cairo',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;text-decoration:underline;">
+                        إنشاء حساب جديد
+                    </button>
+                </div>
+
+                <!-- زر وضع الليل/النهار في صفحة الدخول -->
+                <div style="text-align:center;margin-top:10px;">
+                    <button type="button" onclick="toggleTheme()" id="login-theme-btn"
+                            style="background:none;border:none;color:var(--text-muted);font-family:'Cairo',sans-serif;font-size:0.8rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+                        <i class="fas fa-moon" id="login-theme-icon"></i>
+                        <span id="login-theme-label">وضع الليل</span>
+                    </button>
+                </div>
+
+                <div id="login-error" class="info-box info-box--error hidden" style="margin-top:12px;">
+                    <div class="info-box__header">
+                        <i class="fas fa-circle-xmark"></i>
+                        <span>خطأ في تسجيل الدخول</span>
+                    </div>
+                    <div id="login-error-msg"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== صفحة التسجيل ==================== -->
+    <div id="register-page" class="hidden">
+        <div class="login-bg"></div>
+        <div class="login-wrapper" style="padding:30px 20px;">
+            <div class="login-card" style="max-width:520px;">
+                <div class="login-logo">
+                    <div class="logo-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h1>إنشاء حساب جديد</h1>
+                    <p>سجّل بياناتك للحصول على رقم تسجيل خاص</p>
+                </div>
+
+                <div id="register-form-area">
+                    <div class="name-row">
+                        <div class="form-group">
+                            <label>الاسم الأول</label>
+                            <input type="text" id="reg-firstname" class="input-field" placeholder="أحمد">
+                        </div>
+                        <div class="form-group">
+                            <label>اللقب</label>
+                            <input type="text" id="reg-lastname" class="input-field" placeholder="بن علي">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>رقم التسجيل <span style="color:#ef4444;font-size:0.85rem;">*</span></label>
+                        <input type="text" id="reg-number" class="input-field" placeholder="مثال: STU20250001" dir="ltr" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>البريد الإلكتروني <span style="color:#ef4444;font-size:0.85rem;">*</span></label>
+                        <input type="email" id="reg-email" class="input-field" placeholder="example@univ.dz" dir="ltr" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>نوع الحساب</label>
+                        <select id="reg-role" class="input-field" onchange="toggleRegYearField()">
+                            <option value="">-- اختر الدور --</option>
+                            <option value="student">طالب</option>
+                            <option value="professor">أستاذ</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="reg-specialty-group" style="display:none;">
+                        <label>التخصص</label>
+                        <select id="reg-specialty" class="input-field">
+                            <option value="">-- اختر التخصص --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="reg-year-group" style="display:none;">
+                        <label>سنة الدراسة</label>
+                        <select id="reg-year" class="input-field">
+                            <option value="">-- اختر السنة --</option>
+                            <option value="1">السنة الأولى</option>
+                            <option value="2">السنة الثانية</option>
+                            <option value="3">السنة الثالثة</option>
+                            <option value="4">ماستر 1</option>
+                            <option value="5">ماستر 2</option>
+                        </select>
+                    </div>
+
+                    <div class="name-row">
+                        <div class="form-group">
+                            <label>كلمة المرور</label>
+                            <input type="password" id="reg-password" class="input-field" placeholder="8 أحرف على الأقل" dir="ltr">
+                        </div>
+                        <div class="form-group">
+                            <label>تأكيد كلمة المرور</label>
+                            <input type="password" id="reg-confirm" class="input-field" placeholder="أعد كتابة المرور" dir="ltr">
+                        </div>
+                    </div>
+
+                    <div id="reg-error" class="info-box info-box--error hidden" style="margin-bottom:14px;">
+                        <div class="info-box__header">
+                            <i class="fas fa-circle-xmark"></i>
+                            <span>خطأ</span>
+                        </div>
+                        <div id="reg-error-msg"></div>
+                    </div>
+
+                    <button class="btn-primary btn-full" onclick="handleRegister()">
+                        <i class="fas fa-user-plus"></i> إنشاء الحساب
+                    </button>
+
+                    <div style="text-align:center;margin-top:14px;">
+                        <button type="button" onclick="showLoginPage()"
+                                style="background:none;border:none;color:var(--text-muted);font-family:'Cairo',sans-serif;font-size:0.85rem;cursor:pointer;">
+                            <i class="fas fa-arrow-right"></i> العودة إلى تسجيل الدخول
+                        </button>
+                    </div>
+                </div>
+
+                <!-- رسالة النجاح -->
+                <div id="register-success-area" class="hidden" style="text-align:center;padding:20px 0;">
+                    <div style="font-size:3rem;color:var(--accent);margin-bottom:16px;">
+                        <i class="fas fa-circle-check"></i>
+                    </div>
+                    <h2 style="margin-bottom:8px;font-size:1.3rem;">تم إنشاء حسابك بنجاح!</h2>
+                    <p style="color:var(--text-muted);margin-bottom:20px;">احفظ رقم التسجيل الخاص بك:</p>
+                    <div style="background:rgba(16,185,129,0.1);border:1px solid var(--accent);border-radius:12px;padding:16px 24px;display:inline-block;margin-bottom:24px;">
+                        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">رقم التسجيل</div>
+                        <div id="reg-success-number" style="font-size:1.5rem;font-weight:800;color:var(--accent);letter-spacing:2px;direction:ltr;">—</div>
+                    </div>
+                    <br>
+                    <button class="btn-primary" onclick="goToLoginAfterRegister()">
+                        <i class="fas fa-arrow-right-to-bracket"></i> تسجيل الدخول الآن
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== لوحة الطالب ==================== -->
+    <div id="student-dashboard" class="dashboard hidden">
+        <aside class="sidebar" id="student-sidebar">
+            <div class="sidebar__header">
+                <div class="sidebar__logo">
+                    <div class="logo-icon logo-icon--sm">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <div class="sidebar__title">تبريرات الغياب</div>
+                        <div class="sidebar__subtitle">المنصة الأكاديمية</div>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar__profile">
+                <div class="profile-card">
+                    <div class="profile-card__avatar profile-card__avatar--green">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div class="profile-card__name" id="sidebar-student-name">-</div>
+                        <div class="profile-card__info" id="sidebar-student-info">-</div>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar__nav">
+                <div class="sidebar-link active" data-page="student-main" onclick="showStudentPage('student-main')">
+                    <i class="fas fa-house"></i> الرئيسية
+                </div>
+                <div class="sidebar-link" data-page="student-new" onclick="showStudentPage('student-new')">
+                    <i class="fas fa-plus-circle"></i> تبرير جديد
+                </div>
+                <div class="sidebar-link" data-page="student-history" onclick="showStudentPage('student-history')">
+                    <i class="fas fa-clock-rotate-left"></i> سجل التبريرات
+                </div>
+                <div class="sidebar-link" data-page="student-appeals" onclick="showStudentPage('student-appeals')">
+                    <i class="fas fa-gavel"></i> الطعون
+                </div>
+            </nav>
+            <div class="sidebar__footer">
+                <div class="sidebar-link" onclick="toggleTheme()" id="student-theme-link">
+                    <i class="fas fa-moon" id="student-theme-icon"></i> <span id="student-theme-label">وضع الليل</span>
+                </div>
+                <div class="sidebar-link sidebar-link--danger" onclick="logout()">
+                    <i class="fas fa-right-from-bracket"></i> تسجيل الخروج
+                </div>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="content-header">
+                <div class="content-header__right">
+                    <button class="mobile-toggle" onclick="toggleSidebar('student-sidebar')">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 id="student-page-title">الرئيسية</h2>
+                </div>
+                <div class="content-header__left">
+                    <div class="notification-bell" onclick="showToast('لا توجد إشعارات جديدة','info')">
+                        <i class="fas fa-bell"></i>
+                        <span class="pulse-dot pulse-dot--amber"></span>
+                    </div>
+                </div>
+            </header>
+            <div class="content-body">
+                <!-- الرئيسية -->
+                <div id="student-main" class="page-section active fade-in">
+                    <div class="stats-grid">
+                        <div class="stat-card stat-card--green">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">إجمالي التبريرات</div>
+                                    <div class="stat-card__value" id="stat-total">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--green">
+                                    <i class="fas fa-file-lines"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--amber">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">قيد المراجعة</div>
+                                    <div class="stat-card__value" id="stat-pending">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--amber">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--green">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">مقبولة</div>
+                                    <div class="stat-card__value" id="stat-accepted">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--green">
+                                    <i class="fas fa-circle-check"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--red">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">مرفوضة</div>
+                                    <div class="stat-card__value" id="stat-rejected">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--red">
+                                    <i class="fas fa-circle-xmark"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <h3>آخر التبريرات</h3>
+                        <button class="btn-secondary btn-sm" onclick="showStudentPage('student-new')">
+                            <i class="fas fa-plus"></i> تبرير جديد
+                        </button>
+                    </div>
+                    <div id="student-recent-list" class="cards-list"></div>
+                </div>
+
+                <!-- تبرير جديد -->
+                <div id="student-new" class="page-section fade-in">
+                    <div class="new-just-grid">
+                        <div class="new-just__right">
+                            <div class="stat-card">
+                                <h3 class="card-title">
+                                    <i class="fas fa-calendar-days card-title__icon card-title__icon--green"></i>
+                                    اختر يوم الغياب
+                                </h3>
+                                <div class="calendar-nav">
+                                    <button onclick="changeMonth(-1)"><i class="fas fa-chevron-right"></i></button>
+                                    <span id="calendar-month"></span>
+                                    <button onclick="changeMonth(1)"><i class="fas fa-chevron-left"></i></button>
+                                </div>
+                                <div class="calendar-grid calendar-grid--header">
+                                    <div class="cal-day-name">أحد</div>
+                                    <div class="cal-day-name">اثن</div>
+                                    <div class="cal-day-name">ثلا</div>
+                                    <div class="cal-day-name">أرب</div>
+                                    <div class="cal-day-name">خمي</div>
+                                    <div class="cal-day-name">جمع</div>
+                                    <div class="cal-day-name">سبت</div>
+                                </div>
+                                <div class="calendar-grid" id="calendar-days"></div>
+                            </div>
+                            <div class="stat-card" id="time-picker-card">
+                                <h3 class="card-title">
+                                    <i class="fas fa-clock card-title__icon card-title__icon--green"></i>
+                                    تحديد وقت الغياب
+                                </h3>
+                                <div class="time-picker-wrapper">
+                                    <div class="time-picker-block">
+                                        <div class="time-picker-label">
+                                            <i class="fas fa-play" style="font-size:0.65rem;opacity:0.7;"></i>
+                                            من الساعة
+                                        </div>
+                                        <div class="time-slots-grid" id="time-from-grid">
+                                            <!-- يُملأ بـ JS -->
+                                        </div>
+                                        <input type="hidden" id="absence-time-from">
+                                    </div>
+                                    <div class="time-picker-divider">
+                                        <div class="time-picker-divider__line"></div>
+                                        <i class="fas fa-arrow-left time-picker-divider__icon"></i>
+                                        <div class="time-picker-divider__line"></div>
+                                    </div>
+                                    <div class="time-picker-block">
+                                        <div class="time-picker-label">
+                                            <i class="fas fa-stop" style="font-size:0.65rem;opacity:0.7;"></i>
+                                            إلى الساعة
+                                        </div>
+                                        <div class="time-slots-grid" id="time-to-grid">
+                                            <!-- يُملأ بـ JS -->
+                                        </div>
+                                        <input type="hidden" id="absence-time-to">
+                                    </div>
+                                </div>
+                                <div id="time-range-display" class="time-range-display hidden">
+                                    <i class="fas fa-clock-rotate-left" style="opacity:0.6;"></i>
+                                    <span id="time-range-text"></span>
+                                </div>
+                            </div>
+                            <div class="stat-card hidden" id="sessions-card">
+                                <h3 class="card-title">
+                                    <i class="fas fa-book-open card-title__icon card-title__icon--amber"></i>
+                                    حصص يوم <span id="selected-day-label"></span>
+                                </h3>
+                                <div id="sessions-list" class="sessions-list"></div>
+                            </div>
+                        </div>
+                        <div class="new-just__left">
+                            <div class="stat-card">
+                                <h3 class="card-title">
+                                    <i class="fas fa-upload card-title__icon card-title__icon--green"></i>
+                                    الملف المرفق
+                                </h3>
+                                <div class="file-drop" id="file-drop" onclick="document.getElementById('file-input').click()">
+                                    <input type="file" id="file-input" accept="image/*,.pdf" style="display:none" onchange="handleFileSelect(event)">
+                                    <div id="file-placeholder" class="file-drop__placeholder">
+                                        <i class="fas fa-cloud-arrow-up"></i>
+                                        <p class="file-drop__title">اضغط لاختيار ملف أو اسحبه هنا</p>
+                                        <p class="file-drop__hint">PNG, JPG, PDF - الحد الأقصى 5MB</p>
+                                    </div>
+                                    <div id="file-preview" class="file-drop__preview hidden"></div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <h3 class="card-title">
+                                    <i class="fas fa-chalkboard-teacher card-title__icon card-title__icon--green"></i>
+                                    نوع الحصة
+                                </h3>
+                                <select id="session-type" class="input-field">
+                                    <option value="">-- اختر نوع الحصة --</option>
+                                    <option value="cours">Cours (محاضرة)</option>
+                                    <option value="td">TD (أعمال موجهة)</option>
+                                    <option value="tp">TP (أعمال تطبيقية)</option>
+                                    <option value="exam">Exam (امتحان)</option>
+                                </select>
+                            </div>
+                            <div class="stat-card">
+                                <h3 class="card-title">
+                                    <i class="fas fa-pen card-title__icon card-title__icon--amber"></i>
+                                    ملاحظات إضافية
+                                </h3>
+                                <textarea id="justification-notes" class="input-field" placeholder="أضف أي تفاصيل إضافية حول سبب الغياب..." rows="4"></textarea>
+                            </div>
+                            <button class="btn-primary btn-full" onclick="submitJustification()" id="submit-just-btn">
+                                <i class="fas fa-paper-plane"></i>
+                                إرسال التبرير
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- سجل التبريرات -->
+                <div id="student-history" class="page-section fade-in">
+                    <div class="filter-bar">
+                        <select class="input-field input-field--sm" id="filter-status" onchange="renderStudentHistory()">
+                            <option value="all">كل الحالات</option>
+                            <option value="pending">قيد المراجعة</option>
+                            <option value="accepted">مقبولة</option>
+                            <option value="rejected">مرفوضة</option>
+                        </select>
+                    </div>
+                    <div id="student-history-list" class="cards-list"></div>
+                </div>
+
+                <!-- الطعون -->
+                <div id="student-appeals" class="page-section fade-in">
+                    <div class="info-banner info-banner--amber">
+                        <div class="info-banner__header">
+                            <i class="fas fa-info-circle"></i>
+                            <span>معلومات عن الطعن</span>
+                        </div>
+                        <p>يمكنك تقديم طعن على التبريرات المرفوضة فقط. سيتم إرسال الطعن للإدارة لمراجعته من جديد مع إرفاق سبب الطعن.</p>
+                    </div>
+                    <div id="student-appeals-list" class="cards-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== لوحة الأستاذ ==================== -->
+    <div id="teacher-dashboard" class="dashboard hidden">
+        <aside class="sidebar" id="teacher-sidebar">
+            <div class="sidebar__header">
+                <div class="sidebar__logo">
+                    <div class="logo-icon logo-icon--sm logo-icon--amber">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <div class="sidebar__title">تبريرات الغياب</div>
+                        <div class="sidebar__subtitle">لوحة الأستاذ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar__profile">
+                <div class="profile-card">
+                    <div class="profile-card__avatar profile-card__avatar--amber">
+                        <i class="fas fa-chalkboard-user"></i>
+                    </div>
+                    <div>
+                        <div class="profile-card__name" id="sidebar-teacher-name">-</div>
+                        <div class="profile-card__info" id="sidebar-teacher-info">-</div>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar__nav">
+                <div class="sidebar-link active" data-page="teacher-main" onclick="showTeacherPage('teacher-main')">
+                    <i class="fas fa-house"></i> الرئيسية
+                </div>
+                <div class="sidebar-link" data-page="teacher-pending" onclick="showTeacherPage('teacher-pending')">
+                    <i class="fas fa-inbox"></i> قيد المراجعة
+                    <span id="teacher-pending-count" class="sidebar-badge">0</span>
+                </div>
+                <div class="sidebar-link" data-page="teacher-reviewed" onclick="showTeacherPage('teacher-reviewed')">
+                    <i class="fas fa-check-double"></i> تمت المراجعة
+                </div>
+            </nav>
+            <div class="sidebar__footer">
+                <div class="sidebar-link" onclick="toggleTheme()" id="teacher-theme-link">
+                    <i class="fas fa-moon" id="teacher-theme-icon"></i> <span id="teacher-theme-label">وضع الليل</span>
+                </div>
+                <div class="sidebar-link sidebar-link--danger" onclick="logout()">
+                    <i class="fas fa-right-from-bracket"></i> تسجيل الخروج
+                </div>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="content-header">
+                <div class="content-header__right">
+                    <button class="mobile-toggle" onclick="toggleSidebar('teacher-sidebar')">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 id="teacher-page-title">الرئيسية</h2>
+                </div>
+                <div class="content-header__left">
+                </div>
+            </header>
+            <div class="content-body">
+                <div id="teacher-main" class="page-section active fade-in">
+                    <div class="stats-grid">
+                        <div class="stat-card stat-card--amber">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">قيد المراجعة</div>
+                                    <div class="stat-card__value" id="teacher-stat-pending">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--amber"><i class="fas fa-inbox"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--green">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label"> مقبولة</div>
+                                    <div class="stat-card__value" id="teacher-stat-accepted">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--green"><i class="fas fa-circle-check"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--red">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">مرفوضة</div>
+                                    <div class="stat-card__value" id="teacher-stat-rejected">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--red"><i class="fas fa-circle-xmark"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--cyan">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">إجمالي الطلاب</div>
+                                    <div class="stat-card__value" id="teacher-stat-students">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--cyan"><i class="fas fa-users"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-header"><h3>آخر التبريرات المرسلة إليك</h3></div>
+                    <div id="teacher-recent-list" class="cards-list"></div>
+                </div>
+                <div id="teacher-pending" class="page-section fade-in">
+                    <div id="teacher-pending-list" class="cards-list"></div>
+                </div>
+                <div id="teacher-reviewed" class="page-section fade-in">
+                    <div id="teacher-reviewed-list" class="cards-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== لوحة الإدارة ==================== -->
+    <div id="admin-dashboard" class="dashboard hidden">
+        <aside class="sidebar" id="admin-sidebar">
+            <div class="sidebar__header">
+                <div class="sidebar__logo">
+                    <div class="logo-icon logo-icon--sm logo-icon--cyan">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <div class="sidebar__title">تبريرات الغياب</div>
+                        <div class="sidebar__subtitle">لوحة الإدارة</div>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar__profile">
+                <div class="profile-card">
+                    <div class="profile-card__avatar profile-card__avatar--cyan">
+                        <i class="fas fa-building-columns"></i>
+                    </div>
+                    <div>
+                        <div class="profile-card__name" id="sidebar-admin-name">-</div>
+                        <div class="profile-card__info">الإدارة العامة</div>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar__nav">
+                <div class="sidebar-link active" data-page="admin-main" onclick="showAdminPage('admin-main')">
+                    <i class="fas fa-chart-pie"></i> الإحصائيات
+                </div>
+                <div class="sidebar-link" data-page="admin-justifications" onclick="showAdminPage('admin-justifications')">
+                    <i class="fas fa-file-lines"></i> جميع التبريرات
+                </div>
+                <div class="sidebar-link" data-page="admin-appeals" onclick="showAdminPage('admin-appeals')">
+                    <i class="fas fa-gavel"></i> الطعون
+                    <span id="admin-appeals-count" class="sidebar-badge sidebar-badge--red">0</span>
+                </div>
+                <div class="sidebar-link" data-page="admin-students" onclick="showAdminPage('admin-students')">
+                    <i class="fas fa-users"></i> إدارة الطلاب
+                </div>
+                <div class="sidebar-link" data-page="admin-users" onclick="showAdminPage('admin-users')">
+                    <i class="fas fa-user-gear"></i> إدارة المستخدمين
+                </div>
+                <!-- [4] خانة التخصصات والمواد -->
+                <div class="sidebar-link" data-page="admin-specialties" onclick="showAdminPage('admin-specialties')">
+                    <i class="fas fa-layer-group"></i> التخصصات والمواد
+                </div>
+            </nav>
+            <div class="sidebar__footer">
+                <!-- [5] وضع الليل/النهار في الإدارة -->
+                <div class="sidebar-link" onclick="toggleTheme()" id="admin-theme-link">
+                    <i class="fas fa-moon" id="admin-theme-icon"></i> <span id="admin-theme-label">وضع الليل</span>
+                </div>
+                <div class="sidebar-link sidebar-link--danger" onclick="logout()">
+                    <i class="fas fa-right-from-bracket"></i> تسجيل الخروج
+                </div>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="content-header">
+                <div class="content-header__right">
+                    <button class="mobile-toggle" onclick="toggleSidebar('admin-sidebar')">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 id="admin-page-title">الإحصائيات</h2>
+                </div>
+                <!-- [3] أُزيل زر تصدير CSV -->
+                <div class="content-header__left"></div>
+            </header>
+            <div class="content-body">
+                <!-- الإحصائيات — [6] إحصائيات واقعية 100% -->
+                <div id="admin-main" class="page-section active fade-in">
+                    <div class="stats-grid">
+                        <div class="stat-card stat-card--green">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">إجمالي التبريرات</div>
+                                    <div class="stat-card__value" id="admin-stat-total">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--green"><i class="fas fa-file-lines"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--amber">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">قيد المراجعة</div>
+                                    <div class="stat-card__value" id="admin-stat-pending">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--amber"><i class="fas fa-hourglass-half"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--green">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">نسبة القبول</div>
+                                    <div class="stat-card__value" id="admin-stat-rate">—</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--green"><i class="fas fa-chart-line"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card--red">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">الطعون المعلقة</div>
+                                    <div class="stat-card__value" id="admin-stat-appeals">0</div>
+                                </div>
+                                <div class="stat-card__icon stat-card__icon--red"><i class="fas fa-gavel"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- إحصائيات إضافية -->
+                    <div class="stats-grid" style="margin-top:16px;">
+                        <div class="stat-card">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">عدد الطلاب النشطين</div>
+                                    <div class="stat-card__value" id="admin-stat-students">0</div>
+                                </div>
+                                <div class="stat-card__icon" style="color:var(--accent-cyan);"><i class="fas fa-graduation-cap"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">عدد الأساتذة</div>
+                                    <div class="stat-card__value" id="admin-stat-profs">0</div>
+                                </div>
+                                <div class="stat-card__icon" style="color:var(--accent-warm);"><i class="fas fa-chalkboard-user"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">عدد التخصصات</div>
+                                    <div class="stat-card__value" id="admin-stat-specs">0</div>
+                                </div>
+                                <div class="stat-card__icon" style="color:var(--accent);"><i class="fas fa-layer-group"></i></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card__body">
+                                <div>
+                                    <div class="stat-card__label">هذا الشهر</div>
+                                    <div class="stat-card__value" id="admin-stat-thismonth">0</div>
+                                </div>
+                                <div class="stat-card__icon" style="color:#a78bfa;"><i class="fas fa-calendar-check"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid" style="margin-top:24px;">
+                        <div class="stat-card">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-bar card-title__icon card-title__icon--green"></i>
+                                التبريرات حسب الشهر (آخر 6 أشهر)
+                            </h3>
+                            <!-- [6] يُملأ من JS -->
+                            <div class="bar-chart" id="admin-bar-chart"></div>
+                        </div>
+                        <div class="stat-card">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-pie card-title__icon card-title__icon--amber"></i>
+                                توزيع الحالات
+                            </h3>
+                            <!-- [6] يُملأ من JS -->
+                            <div class="progress-list" id="admin-progress-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- جميع التبريرات -->
+                <div id="admin-justifications" class="page-section fade-in">
+                    <div class="filter-bar">
+                        <select class="input-field input-field--sm" id="admin-filter-status" onchange="renderAdminJustifications()">
+                            <option value="all">كل الحالات</option>
+                            <option value="pending">قيد المراجعة</option>
+                            <option value="accepted">مقبولة</option>
+                            <option value="rejected">مرفوضة</option>
+                        </select>
+                        <select class="input-field input-field--sm" id="admin-filter-specialty" onchange="renderAdminJustifications()">
+                            <option value="all">كل التخصصات</option>
+                        </select>
+                    </div>
+                    <div id="admin-just-list" class="cards-list"></div>
+                </div>
+
+                <!-- الطعون -->
+                <div id="admin-appeals" class="page-section fade-in">
+                    <div id="admin-appeals-list" class="cards-list"></div>
+                </div>
+
+                <!-- إدارة الطلاب -->
+                <div id="admin-students" class="page-section fade-in">
+                    <div class="filter-bar">
+                        <input type="text" class="input-field input-field--sm" style="width:300px"
+                               placeholder="بحث عن طالب بالاسم أو اللقب..."
+                               id="admin-search-student" oninput="renderAdminStudents()">
+                    </div>
+                    <div class="stat-card stat-card--table">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>الطالب</th>
+                                    <th>التخصص</th>
+                                    <th>السنة</th>
+                                    <th>الغيابات</th>
+                                    <th>التبريرات</th>
+                                    <th>نسبة التبرير</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-students-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- إدارة المستخدمين -->
+                <div id="admin-users" class="page-section fade-in">
+                    <div class="section-header">
+                        <h3>إدارة الطلاب والأساتذة</h3>
+                        <button class="btn-primary btn-sm" onclick="openUserModal()">
+                            <i class="fas fa-user-plus"></i> إضافة مستخدم
+                        </button>
+                    </div>
+                    <div class="filter-bar">
+                        <select class="input-field input-field--sm" id="admin-user-role-filter" onchange="renderAdminUsers()" style="width:180px">
+                            <option value="all">كل الأدوار</option>
+                            <option value="student">طالب</option>
+                            <option value="professor">أستاذ</option>
+                            <option value="admin">إدارة</option>
+                        </select>
+                        <input type="text" class="input-field input-field--sm" style="width:300px"
+                               placeholder="بحث بالاسم أو رقم التسجيل..."
+                               id="admin-user-search" oninput="renderAdminUsers()">
+                    </div>
+                    <div class="stat-card stat-card--table">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>المستخدم</th>
+                                    <th>رقم التسجيل</th>
+                                    <th>الدور</th>
+                                    <th>البريد الإلكتروني</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- [4] التخصصات والمواد -->
+                <div id="admin-specialties" class="page-section fade-in">
+                    <div class="section-header">
+                        <h3><i class="fas fa-layer-group" style="color:var(--accent);margin-left:8px;"></i> إدارة التخصصات والمواد</h3>
+                        <button class="btn-primary btn-sm" onclick="openAddSpecialtyModal()">
+                            <i class="fas fa-plus"></i> إضافة تخصص
+                        </button>
+                    </div>
+                    <div class="info-banner info-banner--green" style="margin-bottom:20px;">
+                        <div class="info-banner__header">
+                            <i class="fas fa-info-circle"></i>
+                            <span>كيفية الاستخدام</span>
+                        </div>
+                        <p>أضف تخصصاً ثم أضف مواده وعيّن أستاذاً مسؤولاً لكل مادة. ستظهر التخصصات لاحقاً في نموذج تسجيل الطلاب الجدد.</p>
+                    </div>
+                    <div id="admin-specialties-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== Modals ==================== -->
+    <div class="modal-overlay" id="review-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>مراجعة التبرير</h3>
+                <button class="modal-close" onclick="closeModal('review-modal')"><i class="fas fa-xmark"></i></button>
+            </div>
+            <div id="review-modal-content"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="appeal-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>تقديم طعن</h3>
+                <button class="modal-close" onclick="closeModal('appeal-modal')"><i class="fas fa-xmark"></i></button>
+            </div>
+            <div id="appeal-modal-content"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="user-modal-title">إضافة مستخدم</h3>
+                <button class="modal-close" onclick="closeModal('user-modal')"><i class="fas fa-xmark"></i></button>
+            </div>
+            <div id="user-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- [4] Modal التخصصات والمواد -->
+    <div class="modal-overlay" id="specialty-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="specialty-modal-title">إضافة تخصص</h3>
+                <button class="modal-close" onclick="closeModal('specialty-modal')"><i class="fas fa-xmark"></i></button>
+            </div>
+            <div id="specialty-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !document.getElementById('login-page').classList.contains('hidden')) {
+                handleLogin();
+            }
+        });
+    </script>
+</body>
+</html>
